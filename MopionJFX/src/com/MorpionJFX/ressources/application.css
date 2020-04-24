@@ -1,1 +1,18 @@
-/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+
+.root{
+	-fx-font-family: "Avenir Next";
+	-fx-background-color: #F0F4F8 ;
+	-fx-alignment: cneter ;
+	-fx-spacing: 10px;
+}
+
+.label{
+	-fx-text-fill: #044E54 ;
+}
+
+#Hbox-border{
+	-fx-border-color: black ;
+	-fx-border-style:  dashed ;
+	-fx-border-radius: 5px;
+}
