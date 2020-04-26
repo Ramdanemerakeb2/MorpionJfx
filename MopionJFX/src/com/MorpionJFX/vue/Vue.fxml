@@ -46,18 +46,7 @@
 				<Button fx:id="nvPartie" alignment="CENTER"
 					contentDisplay="CENTER" mnemonicParsing="false"
 					onAction="#lancerPartie" prefHeight="46.0" prefWidth="224.0"
-					text="Nouvelle partie" translateX="180.0">
-					<VBox.margin>
-						<Insets />
-					</VBox.margin>
-					<font>
-						<Font name="Lato Heavy" size="20.0" />
-					</font>
-				</Button>
-				<Button fx:id="ldPartie" alignment="CENTER"
-					contentDisplay="CENTER" mnemonicParsing="false"
-					onAction="#loadPartie" prefHeight="48.0" prefWidth="226.0"
-					text="Continuer une partie" translateX="180.0" translateY="20.0">
+					text="Jouer" translateX="180.0" translateY="30.0">
 					<VBox.margin>
 						<Insets />
 					</VBox.margin>
