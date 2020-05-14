@@ -1,5 +1,7 @@
 package com.MorpionJFX.controleur;
 
+
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -11,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class VueJeuController implements Initializable {
+public class VueIAController implements Initializable {
 
 	@FXML
     private ImageView ImgJoueur1;
