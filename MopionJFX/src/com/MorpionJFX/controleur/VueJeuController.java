@@ -13,6 +13,9 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,7 +47,7 @@ public class VueJeuController implements Initializable {
     private Label labelJoueur1 ,labelJoueur2, labelGagnant,scoreJoueur1,scoreJoueur2 ,tempsJeu;
 	
 	@FXML
-	static private GridPane tableJeu ;
+	private GridPane tableJeu ;
 	
 	@FXML
     private Pane paneVueJeu; //la pane courante qui contient l'activité a afficher 
@@ -76,23 +79,22 @@ public class VueJeuController implements Initializable {
     Image image3 = new Image(input3);
     
     
-    private Node getNodeFromGridPane( int row, int col, GridPane gridPane) {
+    private Node getNodeFromGridPane(  int col,int row, GridPane gridPane) {
         for (Node node : gridPane.getChildren())
             if (GridPane.getColumnIndex(node) != null
                     && GridPane.getColumnIndex(node) != null
-                    && GridPane.getRowIndex(node) == row
-                    && GridPane.getColumnIndex(node) == col)
+                    && GridPane.getRowIndex(node).intValue() == row
+                    && GridPane.getColumnIndex(node).intValue() == col)
                 return node;
         return null;
     }
-    
     
     /*public Node getNodeByRowColumnIndex (final int row, final int column, GridPane gridPane) {
         Node result = null;
         ObservableList<Node> childrens = gridPane.getChildren();
 
         for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
@@ -100,6 +102,8 @@ public class VueJeuController implements Initializable {
 
         return result;
     }*/
+    
+    
 	
     //les deux fonctions font appele aux fonctions de ControllerVue 
     //cette fonction permet de fermer la fenetre VueJeu et ouvre la fentre de Vue 
@@ -113,34 +117,80 @@ public class VueJeuController implements Initializable {
     @FXML
 	private void replayGame(ActionEvent e){
     	try {
-            Parent l_oRoot = FXMLLoader.load(getClass().getResource("../vue/VueJeu.fxml"));
-            Scene l_oScene = buttonReplay.getScene();
-            l_oRoot.translateYProperty().set(l_oScene.getHeight());
-            paneVueJeu.getChildren().add(l_oRoot);
-            Timeline l_oTl = new Timeline();
-            KeyValue l_oKv = new KeyValue(l_oRoot.translateYProperty(), 0, Interpolator.EASE_OUT);
-            KeyFrame l_oKf = new KeyFrame(Duration.millis(1000), l_oKv);
-            l_oTl.getKeyFrames().add(l_oKf);
-            // To remove the previous scene
-            l_oTl.setOnFinished(event -> {
+    		//on relance la meme fenetre avec une transition 
+            Parent Root = FXMLLoader.load(getClass().getResource("../vue/VueJeu.fxml"));
+            Scene Scene = buttonReplay.getScene();
+            Root.translateYProperty().set(Scene.getHeight());
+            
+            paneVueJeu.getChildren().add(Root);
+            
+            //creation une ligne temporelle
+            Timeline tl = new Timeline();
+            
+            //specifier le type d'interpolation a utiliser dans  l_oTl
+            KeyValue kv = new KeyValue(Root.translateYProperty(), 0, Interpolator.EASE_OUT);
+            
+            //creation de l'animation
+            KeyFrame kf = new KeyFrame(Duration.millis(1000), kv);
+            
+            //on ajoute l'animation a la ligne temporelle
+            tl.getKeyFrames().add(kf);
+            
+            // pour supprimer la scene precedente 
+            tl.setOnFinished(event -> {
             	//paneVueJeu.getChildren().clear();
             	paneVueJeu.getChildren().remove(HboxPane);
             });
-            // Displays animation transition between the 2 layouts
-            l_oTl.play();
+            
+            //jouer l'animation de transition entre les deux vues 
+            tl.play();
         } catch (IOException E){
             System.out.println("[ERROR] ");
         }
 	}
     
+    //cette fonction permet de creer deux annimation qui se lance parallelement (l’opacité et la dimension) 
+    public void annimationLabelGagnant(Label l)
+	{   
+    	//transition d’opacité sur 1 seconde
+	    FadeTransition ft = new FadeTransition(Duration.millis(1000),l);
+	    ft.setFromValue(0.1);
+	    ft.setToValue(0.3);
+	    ft.setCycleCount(40);
+	    ft.setAutoReverse(true);
+	    //ft.play();
+	    
+	    //transition de dimension sur 1 seconde
+	    ScaleTransition st = new ScaleTransition(Duration.millis(1000), l);
+	    st.setByX(0.2f);
+	    st.setByY(0.2f);
+	    st.setCycleCount(40);	
+	    st.setAutoReverse(true);
+	    //st.play();
+	    
+	    //lancer la transition de dimension et d'opacité parallelement  
+	    ParallelTransition parallelTransition = new ParallelTransition(); 
+	    parallelTransition.getChildren().addAll(ft, st);
+	    parallelTransition.setCycleCount(Timeline.INDEFINITE) ;
+	    parallelTransition.play();
+	    
+	    
+	}
+    
     public void annimation_btn2(Node node)
 	{
-    FadeTransition ft = new FadeTransition(Duration.millis(1000),node);
+    
+    RotateTransition rt = new RotateTransition(Duration. millis(3000), node);
+    rt.setByAngle(360);
+    rt.setCycleCount(40);
+    rt.setAutoReverse(true);
+    rt.play();
+    /*FadeTransition ft = new FadeTransition(Duration.millis(1000),node);
     ft.setFromValue(1.0);
     ft.setToValue(0.3);
     ft.setCycleCount(40);
     ft.setAutoReverse(true);
-    ft.play();
+    ft.play();*/
 	}
     
   //cette fonction permet de fermer la fenetre VueJeu et ouvre la fentre de Vue
@@ -296,18 +346,28 @@ public class VueJeuController implements Initializable {
 			System.out.println(partie1.rools().get(1));
 			System.out.println(partie1.rools().get(2));
 			System.out.println("***********************************");
+			System.out.println(partie1.rools().get(3));
+			System.out.println(partie1.rools().get(4));
+			System.out.println("***********************************");
+			System.out.println(partie1.rools().get(5));
+			System.out.println(partie1.rools().get(6));
 			
 			
-			/*annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
+			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
 			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(3)),Integer.parseInt(partie1.rools().get(4)),tableJeu));
-			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(5)),Integer.parseInt(partie1.rools().get(6)),tableJeu));*/
+			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(5)),Integer.parseInt(partie1.rools().get(6)),tableJeu));
 			
 			if(joueur1.getWin() == true)
-			{
+			{   
+				//lancer la transition de dimension et d'opacité
 				labelGagnant.setText("le gagnant c'est Joueur 1");
+				annimationLabelGagnant(labelGagnant);
+				
 				/*name.setText(joueur1.getNom());					
 				annimation_Label2(name);
 				annimation_Label1(name);*/
+				
+				//incrementation de score pour le joueur 2
 				joueur1.setNombreWin();
 				scoreJoueur1.setText(Integer.toString(joueur1.getNombreWin()));
 			}
@@ -316,7 +376,12 @@ public class VueJeuController implements Initializable {
 				/*name.setText(joueur2.getNom());
 				annimation_Label2(name);
 				annimation_Label1(name);*/
+				
+				//lancer la transition de dimension et d'opacité
 				labelGagnant.setText("le gagnant c'est Joueur 2");
+				annimationLabelGagnant(labelGagnant);
+				
+				//incrementation de score pour le joueur 2
 				joueur2.setNombreWin();
 				scoreJoueur2.setText(Integer.toString(joueur2.getNombreWin()));
 			}
