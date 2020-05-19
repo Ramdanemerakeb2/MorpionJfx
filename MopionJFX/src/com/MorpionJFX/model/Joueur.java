@@ -16,9 +16,7 @@ public class Joueur {
 	boolean win = false ;
 	int nombre_win = 0 ;
 	
-	public Joueur() {
-		
-	}
+	
 	
 	public Joueur(String sym) {
 		
@@ -45,11 +43,11 @@ public class Joueur {
 	
 	public void setBackground() {
 		if((this.Sym).compareTo("croix") == 0 ) {
-			BackgroundImage bgImage = new BackgroundImage( new Image( getClass().getResource("/pictures/croix2.jpg").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(50, 50, true, true, true, false));
+			BackgroundImage bgImage = new BackgroundImage( new Image( getClass().getResource("/com/MorpionJFX/ressources/cross.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(50, 50, true, true, true, false));
 	        this.bg = new Background(bgImage);
 		}
 		if((this.Sym).compareTo("cercle") == 0 ) {
-			BackgroundImage bgImage = new BackgroundImage( new Image( getClass().getResource("/pictures/cercle.jpg").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(50, 50, true, true, true, false));
+			BackgroundImage bgImage = new BackgroundImage( new Image( getClass().getResource("/com/MorpionJFX/ressources/circle.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(50, 50, true, true, true, false));
 	        this.bg = new Background(bgImage);
 		}
 	}
