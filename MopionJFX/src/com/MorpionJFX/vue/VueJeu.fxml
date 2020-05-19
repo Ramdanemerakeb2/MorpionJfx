@@ -29,7 +29,7 @@
       						</Button>
                      </children>
                   </HBox>
-                  <Label fx:id="labelGagnant" prefHeight="50.0" prefWidth="418.0" translateX="50.0" translateY="20.0">
+                  <Label fx:id="labelGagnant" prefHeight="50.0" prefWidth="368.0" translateX="75.0" translateY="20.0">
                      <font>
                         <Font size="28.0" />
                      </font>
@@ -108,7 +108,15 @@
 										<Insets bottom="5.0" left="15.0" right="5.0" top="10.0" />
 									</HBox.margin>
 								</ImageView>
-								<Label fx:id="tempsJeu" prefHeight="42.0" prefWidth="104.0" text="Label" translateY="30.0" />
+								<Label fx:id="tempsJeu" prefHeight="42.0" prefWidth="35.0" translateX="5.0" translateY="30.0">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font></Label>
+                        <Label fx:id="tempsJeu1" layoutX="120.0" layoutY="11.0" prefHeight="42.0" prefWidth="17.0" text="S" translateX="10.0" translateY="30.0">
+                           <font>
+                              <Font name="System Bold" size="17.0" />
+                           </font>
+                        </Label>
 							</children>
 						</HBox>
 						<HBox id="Hbox-border" prefHeight="200.0" prefWidth="164.0">
@@ -137,8 +145,14 @@
 								</VBox>
 								<VBox prefHeight="200.0" prefWidth="100.0">
 									<children>
-										<Label fx:id="scoreJoueur1" prefHeight="26.0" prefWidth="56.0" text="Label" translateX="15.0" translateY="60.0" />
-										<Label fx:id="scoreJoueur2" layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="56.0" text="Label" translateX="15.0" translateY="109.0" />
+										<Label fx:id="scoreJoueur1" prefHeight="26.0" prefWidth="56.0" text="Label" translateX="15.0" translateY="60.0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font></Label>
+										<Label fx:id="scoreJoueur2" layoutX="10.0" layoutY="10.0" prefHeight="26.0" prefWidth="56.0" text="Label" translateX="15.0" translateY="109.0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font></Label>
 									</children>
 								</VBox>
 							</children>

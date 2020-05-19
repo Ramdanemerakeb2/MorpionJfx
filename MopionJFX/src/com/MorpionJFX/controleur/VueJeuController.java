@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.MorpionJFX.model.Joueur;
 import com.MorpionJFX.model.VerificationPartieJvsJ;
@@ -17,6 +19,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -44,7 +47,10 @@ public class VueJeuController implements Initializable {
     private Button buttonMenu , buttonReplay ;
 	
 	@FXML
-    private Label labelJoueur1 ,labelJoueur2, labelGagnant,scoreJoueur1,scoreJoueur2 ,tempsJeu;
+    public Label labelJoueur1 ,labelJoueur2, labelGagnant,scoreJoueur1,scoreJoueur2 ;
+	
+	@FXML
+	public Label tempsJeu;
 	
 	@FXML
 	private GridPane tableJeu ;
@@ -55,19 +61,22 @@ public class VueJeuController implements Initializable {
 	@FXML
     private HBox HboxPane;
 	
-	/*@FXML
-	private Object btn = new Button();*/
+	
 	
 	int depart = 0 ;
-	int nombre_win ;
+	static public int nombre_win1 ;
+	static public int nombre_win2 ;
+	public String tempsTour ; 
 	
-	static Joueur joueur1 = new Joueur("croix") ;
-	static Joueur joueur2 = new Joueur("cercle");
+	public Joueur joueur1 = new Joueur("croix") ;
+	public Joueur joueur2 = new Joueur("cercle");
+	
+	
 	
 	static VerificationPartieJvsJ partie1 = new VerificationPartieJvsJ();
 	
-	ArrayList<String> win = new ArrayList<String>();
-	//Class<?> clazz = this.getClass();
+	//ArrayList<String> win = new ArrayList<String>();
+	
 	
 	//On charge les images du package ressources et on les insere dans initialize
     InputStream input1 = this.getClass().getResourceAsStream("/com/MorpionJFX/ressources/cross.png");
@@ -79,7 +88,54 @@ public class VueJeuController implements Initializable {
     Image image3 = new Image(input3);
     
     
-    private Node getNodeFromGridPane(  int col,int row, GridPane gridPane) {
+    //cette fonction permet de mettre a jour le label de temps chaque seconde
+    private void update() {
+    	Timer timer = new Timer();
+    	timer.schedule(new TimerTask() { // timer task to update the seconds
+    	    @Override
+    	    public void run() {
+    	        
+    	        Platform.runLater(new Runnable() { 
+    	            public void run() {
+    	            	
+    	            	int t = Integer.parseInt(tempsJeu.getText()) ;
+    	        		int t1 = t-1 ;
+    	        		tempsJeu.setText(Integer.toString(t1));
+    	        		
+    	        		//le cas ou le temps est ecoulé on change de tour 
+    	        		if (t1 == -1){
+    	        			
+    	        			if( joueur2.getTour() == 1 ) {
+    	        				joueur1.setTour(0);
+    	        				joueur2.setTour(0);
+    	        				labelJoueur2.setTextFill(Color.BLACK);
+    	    					labelJoueur1.setTextFill(Color.GREEN);
+    	    					tempsJeu.setText(tempsTour);
+    	    					 
+    	        			}else {
+    	        				if( joueur1.getTour() == 0 ) {
+	    	        				joueur1.setTour(1);
+	    	        				joueur2.setTour(1);
+	    	        				labelJoueur1.setTextFill(Color.BLACK);
+	    							labelJoueur2.setTextFill(Color.GREEN);
+	    							
+	    							tempsJeu.setText(tempsTour);
+    	        			        }
+    	        				}
+    	        			
+    	        			}
+    	        		//le cas de victoir on arrete le timer 
+    	        		if(joueur1.getNombreWin() != 0 || joueur2.getNombreWin() != 0) {timer.cancel();}
+    	        		
+    	        		
+    	}});}}, 1000, 1000); //Every 1 second
+    }
+    
+    
+    
+    
+    //elle retourne un node selon sa position dans tableJeu 
+    private Node getNodeFromGridPane(  int row ,int col, GridPane gridPane) {
         for (Node node : gridPane.getChildren())
             if (GridPane.getColumnIndex(node) != null
                     && GridPane.getColumnIndex(node) != null
@@ -89,19 +145,7 @@ public class VueJeuController implements Initializable {
         return null;
     }
     
-    /*public Node getNodeByRowColumnIndex (final int row, final int column, GridPane gridPane) {
-        Node result = null;
-        ObservableList<Node> childrens = gridPane.getChildren();
-
-        for (Node node : childrens) {
-            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
-                result = node;
-                break;
-            }
-        }
-
-        return result;
-    }*/
+   
     
     
 	
@@ -113,7 +157,9 @@ public class VueJeuController implements Initializable {
 	    Class c = getClass();
 	    MainController.openWindows(2,c);
 	}
-  //cette fonction permet de fermer la fenetre VueJeu et ouvre la fentre de Vue
+    
+    
+  //cette fonction permet de relance la vue VueJeu avec une transition
     @FXML
 	private void replayGame(ActionEvent e){
     	try {
@@ -138,7 +184,7 @@ public class VueJeuController implements Initializable {
             
             // pour supprimer la scene precedente 
             tl.setOnFinished(event -> {
-            	//paneVueJeu.getChildren().clear();
+            	
             	paneVueJeu.getChildren().remove(HboxPane);
             });
             
@@ -177,96 +223,127 @@ public class VueJeuController implements Initializable {
 	    
 	}
     
-    public void annimation_btn2(Node node)
+  //cette fonction permet de creer l'annimation de retation  
+    public void annimationVictoire(Node node)
 	{
     
-    RotateTransition rt = new RotateTransition(Duration. millis(3000), node);
-    rt.setByAngle(360);
-    rt.setCycleCount(40);
-    rt.setAutoReverse(true);
-    rt.play();
-    /*FadeTransition ft = new FadeTransition(Duration.millis(1000),node);
-    ft.setFromValue(1.0);
-    ft.setToValue(0.3);
-    ft.setCycleCount(40);
-    ft.setAutoReverse(true);
-    ft.play();*/
+	    RotateTransition rt = new RotateTransition(Duration. millis(3000), node);
+	    rt.setByAngle(360);
+	    rt.setCycleCount(40);
+	    rt.setAutoReverse(true);
+	    rt.play();
+    
 	}
     
-  //cette fonction permet de fermer la fenetre VueJeu et ouvre la fentre de Vue
+  
     @FXML
 	private void jouer(ActionEvent e) throws Exception{
-    	if(depart == 0)
-		{
-		partie1.initialize();
-		joueur1.setWin(false);
-		joueur2.setWin(false);
-		depart = 1 ;
-		
-		
+    	if(depart == 0){
+    		
+			//creation d'une matrice qui represente notre tableJeu
+    		partie1.initialize();
+    		
+			joueur1.setWin(false);
+			joueur2.setWin(false);
+			
+			depart = 1 ;
 		}
 	
+    	
 	if(joueur1.getWin() == false && joueur2.getWin() == false ) 
 	{
 		for(int tour = 0 ; tour<9 ; tour++)
 		{
 			if( joueur1.getTour()== 0 )
 			{	
-				Node source = (Node)e.getSource() ;
-		        Integer i = GridPane.getColumnIndex(source);
-		        Integer j = GridPane.getRowIndex(source);
-		        
-		        System.out.println("i(1) ==="+i);
-				System.out.println("j(2) ==="+j);
-		        
-				Button btnclicked =(Button) e.getSource();
-				if(btnclicked.getId()== null) {
-				btnclicked.setId(joueur1.getSym());
-				joueur1.setBackground();
-				btnclicked.setBackground(joueur1.getBackground());
-				//annimation_btn(btn);
-				//Integer i = GridPane.getRowIndex(btnclicked);
-				//Integer j = GridPane.getColumnIndex(btnclicked);
 				
-				partie1.setSym(i,j,"croix");
+				Button btnclicked =(Button) e.getSource();
+				
+				if(btnclicked.getId()== null) {
+					
+					//on affiche la croix sur la tableJeu 
+					btnclicked.setId(joueur1.getSym());
+					joueur1.setBackground();
+					btnclicked.setBackground(joueur1.getBackground());
+					
+					//on retrouve la position du boutton dans tableJeu 
+					Integer i = GridPane.getRowIndex(btnclicked);
+					Integer j = GridPane.getColumnIndex(btnclicked);
+				
+					System.out.println("i(1) ==="+i);
+					System.out.println("j(2) ==="+j);
+					
+					//on insere un symb dans la matrice selon la position du boutton 
+					partie1.setSym(i,j,"croix");
 	
-				if(partie1.rools() != null) {
-					if(partie1.rools().get(0) == "cercle") 
-					{
-							if((joueur1.getSym()).compareTo("cercle") == 0)
-							{
-									joueur1.setWin(true);
-									win = partie1.rools();
-									break ;
-							}
-					}
-	
-					if(partie1.rools().get(0) == "croix") 
-					{
-						if((joueur1.getSym()).compareTo("croix") == 0)
-						{
-							joueur1.setWin(true);
-							win = partie1.rools();
-
-							break ;
+					if(partie1.rools() != null) {
+						
 							
-						}
-					}
-				}
+								switch (partie1.rools().get(0) ) {
+								
+									case "cercle":
+										
+										if((joueur1.getSym()).compareTo("cercle") == 0)
+										    {
+												joueur1.setWin(true);
+												//win = partie1.rools();
+												break ;
+										    }
+										break;
+			
+									case "croix" :
+										
+										if((joueur1.getSym()).compareTo("croix") == 0)
+										{
+											joueur1.setWin(true);
+											//win = partie1.rools();
+				
+											break ;
+											
+										}
+										break;
+								}
+						
+						
+						/*if(partie1.rools().get(0) == "cercle") 
+							{
+								if((joueur1.getSym()).compareTo("cercle") == 0)
+								{
+										joueur1.setWin(true);
+										//win = partie1.rools();
+										break ;
+								}
+							}
+			
+							if(partie1.rools().get(0) == "croix") 
+							{
+								if((joueur1.getSym()).compareTo("croix") == 0)
+								{
+									joueur1.setWin(true);
+									//win = partie1.rools();
+		
+									break ;
+									
+								}
+							}*/
+				   }
 	
 					if(joueur1.getWin() == false)
-					{
+					{   
+						//on change de tour 
 						joueur2.setTour(1);
 						joueur1.setTour(1);
-						//name.setText(joueur2.getNom());
+						
+						//on met a jour les couleurs des label selon le tour 
 						labelJoueur1.setTextFill(Color.BLACK);
 						labelJoueur2.setTextFill(Color.GREEN);
-						/*annimation_Label2(name);
-						annimation_Label1(name);
-						annimation_Label2(tourDe);
-						annimation_Label1(tourDe);*/
+						
+						//reinitialisation du temps 
+						tempsJeu.setText(tempsTour);
+						
 					}
-			break;
+					
+			       break;
 	
 			}
 			}
@@ -274,62 +351,84 @@ public class VueJeuController implements Initializable {
 			if(joueur2.getTour() == 1)
 			{
 				
-				Node source = (Node)e.getSource() ;
-		        Integer i = GridPane.getColumnIndex(source);
-		        Integer j = GridPane.getRowIndex(source);
-		        
-		        System.out.println("i =="+i);
-				System.out.println("i =="+j);
-				
-				
+				//le meme traitement que le joueur 1
 				Button btnclicked = (Button)e.getSource();
-				if(btnclicked.getId()==null) {
-				btnclicked.setId(joueur2.getSym());
-				joueur2.setBackground();
-				btnclicked.setBackground(joueur2.getBackground());
-				//annimation_btn(btn);
-				//Integer i = GridPane.getRowIndex(btnclicked);
-				//Integer j = GridPane.getColumnIndex(btnclicked);
 				
-				partie1.setSym(i,j,"cercle");
-	
-				if(partie1.rools() != null) {
-				if(partie1.rools().get(0) == "cercle") 
-				{
-						if((joueur2.getSym()).compareTo("cercle") == 0)
-						{
-								joueur2.setWin(true);
-								win = partie1.rools();
-								break ;
-						}
-				}
-
-				if(partie1.rools().get(0) == "croix") 
-				{
-					if((joueur2.getSym()).compareTo("croix") == 0)
-					{
-						joueur2.setWin(true);
-						win = partie1.rools();
-						break ;
-						
-					}
-				}
-				}
-	
-				if(joueur2.getWin() == false) 
-				{
-					joueur1.setTour(0);
-					joueur2.setTour(0);
+				if(btnclicked.getId()==null) {
 					
-					labelJoueur2.setTextFill(Color.BLACK);
-					labelJoueur1.setTextFill(Color.GREEN);
-					/*name.setText(joueur1.getNom());
-					annimation_Label2(name);
-					annimation_Label1(name);
-					annimation_Label2(tourDe);
-					annimation_Label1(tourDe);*/
-					break;
-				}
+					btnclicked.setId(joueur2.getSym());
+					joueur2.setBackground();
+					btnclicked.setBackground(joueur2.getBackground());
+					
+					Integer i = GridPane.getRowIndex(btnclicked);
+					Integer j = GridPane.getColumnIndex(btnclicked);
+					
+					System.out.println("i =="+i);
+					System.out.println("i =="+j);
+					
+					partie1.setSym(i,j,"cercle");
+		
+					if(partie1.rools() != null) {
+						
+						switch (partie1.rools().get(0) ) {
+						
+						case "cercle":
+							
+							if((joueur2.getSym()).compareTo("cercle") == 0)
+							    {
+									joueur2.setWin(true);
+									//win = partie1.rools();
+									break ;
+							    }
+							break;
+
+						case "croix" :
+							
+							if((joueur2.getSym()).compareTo("croix") == 0)
+							{
+								joueur2.setWin(true);
+								//win = partie1.rools();
+	
+								break ;
+								
+							}
+							break;
+					     }
+						
+						/*if(partie1.rools().get(0) == "cercle") 
+						{
+								if((joueur2.getSym()).compareTo("cercle") == 0)
+								{
+										joueur2.setWin(true);
+										//win = partie1.rools();
+										break ;
+								}
+						}
+		
+						if(partie1.rools().get(0) == "croix") 
+						{
+							if((joueur2.getSym()).compareTo("croix") == 0)
+							{
+								joueur2.setWin(true);
+								//win = partie1.rools();
+								break ;
+								
+							}
+						}*/
+					}
+		
+					if(joueur2.getWin() == false) 
+					{
+						joueur1.setTour(0);
+						joueur2.setTour(0);
+						
+						labelJoueur2.setTextFill(Color.BLACK);
+						labelJoueur1.setTextFill(Color.GREEN);
+						
+						tempsJeu.setText(tempsTour);
+						
+						break;
+					}
 			}
 		}
 		}
@@ -337,25 +436,12 @@ public class VueJeuController implements Initializable {
 		if(joueur1.getWin() == true || joueur2.getWin() == true)
 		{
 			System.out.println("tu peux pas");
-			//labelGagnant.setText("le gagnant c'est");
-			//annimation_Label1(tourDe);
-			//annimation_Label2(tourDe);
-			joueur1.setTour(0);
-			joueur2.setTour(0);
 			
-			System.out.println(partie1.rools().get(1));
-			System.out.println(partie1.rools().get(2));
-			System.out.println("***********************************");
-			System.out.println(partie1.rools().get(3));
-			System.out.println(partie1.rools().get(4));
-			System.out.println("***********************************");
-			System.out.println(partie1.rools().get(5));
-			System.out.println(partie1.rools().get(6));
+			//le cas de victoir on applique une retation sur les boutton de la ligne ou la collone ou bien la diagonale 
+			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
+			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(3)),Integer.parseInt(partie1.rools().get(4)),tableJeu));
+			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(5)),Integer.parseInt(partie1.rools().get(6)),tableJeu));
 			
-			
-			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
-			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(3)),Integer.parseInt(partie1.rools().get(4)),tableJeu));
-			annimation_btn2(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(5)),Integer.parseInt(partie1.rools().get(6)),tableJeu));
 			
 			if(joueur1.getWin() == true)
 			{   
@@ -363,19 +449,17 @@ public class VueJeuController implements Initializable {
 				labelGagnant.setText("le gagnant c'est Joueur 1");
 				annimationLabelGagnant(labelGagnant);
 				
-				/*name.setText(joueur1.getNom());					
-				annimation_Label2(name);
-				annimation_Label1(name);*/
-				
-				//incrementation de score pour le joueur 2
+	
+				//incrementation de score pour le joueur 1
 				joueur1.setNombreWin();
-				scoreJoueur1.setText(Integer.toString(joueur1.getNombreWin()));
+				nombre_win1++ ;
+				
+				//mise a jour du score sur l'interface 
+				scoreJoueur1.setText(Integer.toString(nombre_win1));
 			}
 			if(joueur2.getWin() == true) 
 			{
-				/*name.setText(joueur2.getNom());
-				annimation_Label2(name);
-				annimation_Label1(name);*/
+				
 				
 				//lancer la transition de dimension et d'opacité
 				labelGagnant.setText("le gagnant c'est Joueur 2");
@@ -383,7 +467,10 @@ public class VueJeuController implements Initializable {
 				
 				//incrementation de score pour le joueur 2
 				joueur2.setNombreWin();
-				scoreJoueur2.setText(Integer.toString(joueur2.getNombreWin()));
+				nombre_win2 ++ ;
+				
+				//mise a jour du score sur l'interface 
+				scoreJoueur2.setText(Integer.toString(nombre_win2));
 			}
 			partie1.rools().clear();
 			}
@@ -393,19 +480,36 @@ public class VueJeuController implements Initializable {
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		//avant de lancer cette fenetre  on inistialise les images 
+		 
+		tempsTour = VueController.temps;
 		
+		//tempsJeu.setText("10");
+		
+		//on initialise le temps par tour sur l'interface recuperer du menu principale
+		tempsJeu.setText(tempsTour);
+		
+		//avant de lancer cette fenetre  on insere les images
 		ImgJoueur1.setImage(image1);
 		ImgJoueur11.setImage(image1);
 		ImgJoueur2.setImage(image2);
 		ImgJoueur22.setImage(image2);
 		timer.setImage(image3);
-		scoreJoueur1.setText(Integer.toString(joueur1.getNombreWin()));
-		scoreJoueur2.setText(Integer.toString(joueur2.getNombreWin()));
-		labelJoueur1.setTextFill(Color.GREEN);
+		
+		//on initialise le score sur l'interface 
+		scoreJoueur1.setText(Integer.toString(nombre_win1));
+		scoreJoueur2.setText(Integer.toString(nombre_win2));
+		
+		//on fixe que c'est au joueur 1 de commencer le jeu 
 		joueur1.setTour(0);
 		joueur2.setTour(0);
-		System.out.println("hello2");
+		labelJoueur1.setTextFill(Color.GREEN);
+		
+		
+		//en lance notre fonction qui met ajour le tempsJeu  
+		update();
+		
+		
+		
 	}
 	
 

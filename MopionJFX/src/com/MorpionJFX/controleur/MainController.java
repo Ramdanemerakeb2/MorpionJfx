@@ -22,37 +22,41 @@ public class MainController {
 		Stage primaryStage = new Stage();
 	    Parent root = null;
 	    switch (n) {
+	    
+	    //le cas de partie humain vs humain 
 		case 1:
 			try {
 		        root = FXMLLoader.load(c.getResource("../vue/VueJeu.fxml"));
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }
-		    primaryStage.setTitle("Morpion Champion");
+		    primaryStage.setTitle("Morpion Champion (H vs H)");
 		    primaryStage.setScene(new Scene(root));
 		    primaryStage.setResizable(false);
 		    primaryStage.show();
 			break;
-
+			
+		//le cas du menu principale  	
 		case 2:
 			try {
 		        root = FXMLLoader.load(c.getResource("../vue/Vue.fxml"));
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }
-		    primaryStage.setTitle("Morpion Champion");
+		    primaryStage.setTitle("Morpion Champion (Menu Principal)");
 		    primaryStage.setScene(new Scene(root));
 		    primaryStage.setResizable(false);
 		    primaryStage.show();
 			break;
 		
+		//le cas de partie humain vs IA
 		case 3:
 			try {
 		        root = FXMLLoader.load(c.getResource("../vue/VueIA.fxml"));
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }
-		    primaryStage.setTitle("Morpion Champion");
+		    primaryStage.setTitle("Morpion Champion (H vs IA)");
 		    primaryStage.setScene(new Scene(root));
 		    primaryStage.setResizable(false);
 		    primaryStage.show();

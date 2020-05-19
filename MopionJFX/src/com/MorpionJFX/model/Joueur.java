@@ -41,6 +41,7 @@ public class Joueur {
 		return tour ;
 	}
 	
+	//creation des backgroud selon le symbol 
 	public void setBackground() {
 		if((this.Sym).compareTo("croix") == 0 ) {
 			BackgroundImage bgImage = new BackgroundImage( new Image( getClass().getResource("/com/MorpionJFX/ressources/cross.png").toExternalForm()), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(50, 50, true, true, true, false));

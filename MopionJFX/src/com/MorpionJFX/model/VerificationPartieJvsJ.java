@@ -38,11 +38,12 @@ public class VerificationPartieJvsJ {
 
 	}
 	
-	
+	//elle permet de verifier si l'un des jouer a gagné 
 	public ArrayList<String> rools() {	
 			
 		for(int i = 0;i<3;i++)
-		{
+		{   
+			//verification des lignes 
 			if((list[i][0]).compareTo("cercle") == 0 && (list[i][1]).compareTo("cercle") == 0 && (list[i][2]).compareTo("cercle") == 0 )
 			{
 				gagner.add("cercle");
@@ -54,7 +55,7 @@ public class VerificationPartieJvsJ {
 				gagner.add(Integer.toString(2));
 				return gagner;
 			}
-			
+			//verification des colonnes 
 			if((list[i][0]).compareTo("croix") == 0 && (list[i][1]).compareTo("croix") == 0 && (list[i][2]).compareTo("croix") == 0 )
 			{
 				gagner.add("croix");
@@ -98,7 +99,7 @@ public class VerificationPartieJvsJ {
 				}
 			
 		}
-		
+			//verification des diagonales 
 			if((list[0][0]).compareTo("croix") == 0 && (list[1][1]).compareTo("croix") == 0 && (list[2][2]).compareTo("croix") == 0){
 				gagner.add("croix");
 				gagner.add(Integer.toString(0));
