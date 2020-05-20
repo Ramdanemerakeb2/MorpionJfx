@@ -19,6 +19,7 @@ public class VerificationPartieJvsJ {
 		}
 	}
 	
+	//elle permet de verifier si la table du jeu est plein 
 	public boolean full()
 	{	
 		boolean verif = true; 
@@ -32,6 +33,18 @@ public class VerificationPartieJvsJ {
 				}
 		     }
 		}
+		return verif ;
+	}
+	
+	//elle indique la machine peut jouer sur la case ou non 
+	public boolean verifPos(int i , int j)
+	{	
+		boolean verif = false; 
+		
+			if(this.list[i][j].equals("croix") || this.list[i][j].equals("cercle") ) {
+						return true ;
+				}
+		 
 		return verif ;
 	}
 	

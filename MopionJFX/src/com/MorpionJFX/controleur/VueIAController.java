@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -69,8 +70,12 @@ public class VueIAController implements Initializable {
 	public String tempsTour ; 
 	public boolean finJeu ;
 	
+	// generator de position (i , j) pour la machine 
+	public Random generPos;
+	
+	
 	public Joueur joueur1 = new Joueur("croix") ;
-	public Joueur joueur2 = new Joueur("cercle");
+	public Joueur IA = new Joueur("cercle");
 	
 	
 	
@@ -106,9 +111,9 @@ public class VueIAController implements Initializable {
     	        		//le cas ou le temps est ecoulé on change de tour 
     	        		if (t1 == -1){
     	        			
-    	        			if( joueur2.getTour()) {
+    	        			if( IA.getTour()) {
     	        				joueur1.setTour(true);
-    	        				joueur2.setTour(false);
+    	        				IA.setTour(false);
     	        				labelJoueur2.setTextFill(Color.BLACK);
     	    					labelJoueur1.setTextFill(Color.GREEN);
     	    					tempsJeu.setText(tempsTour);
@@ -116,7 +121,7 @@ public class VueIAController implements Initializable {
     	        			}else {
     	        				if( joueur1.getTour()) {
 	    	        				joueur1.setTour(false);
-	    	        				joueur2.setTour(true);
+	    	        				IA.setTour(true);
 	    	        				labelJoueur1.setTextFill(Color.BLACK);
 	    							labelJoueur2.setTextFill(Color.GREEN);
 	    							
@@ -126,7 +131,7 @@ public class VueIAController implements Initializable {
     	        			
     	        			}
     	        		//le cas de victoir on arrete le timer 
-    	        		if(joueur1.getNombreWin() != 0 || joueur2.getNombreWin() != 0 ) {timer.cancel();}
+    	        		if(joueur1.getNombreWin() != 0 || IA.getNombreWin() != 0 ) {timer.cancel();}
     	        		//le cas ou la table est remplie est que personne n'a gagné on arrete le timer
     	        		if(finJeu) {timer.cancel();}
     	        		
@@ -169,7 +174,7 @@ public class VueIAController implements Initializable {
 	private void replayGame(ActionEvent e){
     	try {
     		//on relance la meme fenetre avec une transition 
-            Parent Root = FXMLLoader.load(getClass().getResource("../vue/VueJeu.fxml"));
+            Parent Root = FXMLLoader.load(getClass().getResource("../vue/VueIA.fxml"));
             Scene Scene = buttonReplay.getScene();
             Root.translateYProperty().set(Scene.getHeight());
             
@@ -251,13 +256,15 @@ public class VueIAController implements Initializable {
     		partie1.initialize();
     		
 			joueur1.setWin(false);
-			joueur2.setWin(false);
+			IA.setWin(false);
 			
 			depart = 1 ;
+			
+			generPos = new Random();
 		}
 	
     	
-	if(joueur1.getWin() == false && joueur2.getWin() == false ) 
+	if(joueur1.getWin() == false) 
 	{
 		for(int tour = 0 ; tour<9 ; tour++)
 		{
@@ -285,9 +292,7 @@ public class VueIAController implements Initializable {
 	
 					if(partie1.rools() != null) {
 						
-							
-								
-						
+					
 						
 						if(partie1.rools().get(0) == "cercle") 
 							{
@@ -315,7 +320,7 @@ public class VueIAController implements Initializable {
 					if(joueur1.getWin() == false)
 					{   
 						//on change de tour 
-						joueur2.setTour(true);
+						IA.setTour(true);
 						joueur1.setTour(false);
 						
 						//on met a jour les couleurs des label selon le tour 
@@ -332,69 +337,10 @@ public class VueIAController implements Initializable {
 			}
 			}
 	
-			if(joueur2.getTour())
-			{
-				
-				//le meme traitement que le joueur 1
-				Button btnclicked = (Button)e.getSource();
-				
-				if(btnclicked.getId()==null) {
-					
-					btnclicked.setId(joueur2.getSym());
-					joueur2.setBackground();
-					btnclicked.setBackground(joueur2.getBackground());
-					
-					Integer i = GridPane.getRowIndex(btnclicked);
-					Integer j = GridPane.getColumnIndex(btnclicked);
-					
-					System.out.println("i =="+i);
-					System.out.println("i =="+j);
-					
-					partie1.setSym(i,j,"cercle");
-		
-					if(partie1.rools() != null) {
-						
-						
-						
-						if(partie1.rools().get(0) == "cercle") 
-						{
-								if((joueur2.getSym()).compareTo("cercle") == 0)
-								{
-										joueur2.setWin(true);
-										
-										break ;
-								}
-						}
-		
-						if(partie1.rools().get(0) == "croix") 
-						{
-							if((joueur2.getSym()).compareTo("croix") == 0)
-							{
-								joueur2.setWin(true);
-								
-								break ;
-								
-							}
-						}
-					}
-		
-					if(joueur2.getWin() == false) 
-					{
-						joueur1.setTour(true);
-						joueur2.setTour(false);
-						
-						labelJoueur2.setTextFill(Color.BLACK);
-						labelJoueur1.setTextFill(Color.GREEN);
-						
-						tempsJeu.setText(tempsTour);
-						
-						break;
-					}
-			}
-		}
+			
 		}
 		
-		if(joueur1.getWin() == true || joueur2.getWin() == true)
+		if(joueur1.getWin() == true || IA.getWin() == true)
 		{
 			System.out.println("victoir");
 			
@@ -418,7 +364,7 @@ public class VueIAController implements Initializable {
 				//mise a jour du score sur l'interface 
 				scoreJoueur1.setText(Integer.toString(nombre_win1));
 			}
-			if(joueur2.getWin() == true) 
+			if(IA.getWin() == true) 
 			{
 				
 				
@@ -427,7 +373,7 @@ public class VueIAController implements Initializable {
 				annimationLabelGagnant(labelGagnant);
 				
 				//incrementation de score pour le joueur 2
-				joueur2.setNombreWin();
+				IA.setNombreWin();
 				nombre_win2 ++ ;
 				
 				//mise a jour du score sur l'interface 
@@ -439,12 +385,153 @@ public class VueIAController implements Initializable {
 		
 	}
 	//la tableJeu est remplie et personne n'a gagné 
-	 if(partie1.full() && joueur1.getWin() == false && joueur2.getWin() == false) {
+	 if(partie1.full() && joueur1.getWin() == false && IA.getWin() == false) {
 		finJeu = true ;
 		labelGagnant.setText("Aucun joueur n'a gagné");
 		annimationLabelGagnant(labelGagnant);
 	 }
 	}
+    
+    
+    public void jouerIA() {
+    	Timer timer2 = new Timer();
+    	timer2.schedule(new TimerTask() { // timer task to update the seconds
+    	    @Override
+    	    public void run() {
+    	        
+    	        Platform.runLater(new Runnable() { 
+    	            public void run() {
+    	               if(IA.getWin() == false){	
+    	            	for(int tour = 0 ; tour<9 ; tour++){
+    	            	
+    	            	  if(IA.getTour())
+    	    			    {    
+    	    				
+    	    				int posI;
+    	    				int posJ;
+    	    				// Generer un deplacement aléatoire 
+    	    				do
+    	    				{
+    	    					posI = generPos.nextInt(2);
+    	    					posJ = generPos.nextInt(2);
+    	    				} while (partie1.verifPos(posI, posJ));
+    	    				
+    	    				Button btnclicked = (Button) getNodeFromGridPane(posI, posJ, tableJeu) ;
+    	    				
+    	    				//le meme traitement que le joueur 1
+    	    				//Button btnclicked = (Button)e.getSource();
+    	    				
+    	    				if(btnclicked.getId()==null) {
+    	    					
+    	    					btnclicked.setId(IA.getSym());
+    	    					IA.setBackground();
+    	    					btnclicked.setBackground(IA.getBackground());
+    	    					
+    	    					Integer i = GridPane.getRowIndex(btnclicked);
+    	    					Integer j = GridPane.getColumnIndex(btnclicked);
+    	    					
+    	    					System.out.println("i =="+i);
+    	    					System.out.println("i =="+j);
+    	    					
+    	    					partie1.setSym(i,j,"cercle");
+    	    		
+    	    					if(partie1.rools() != null) {
+    	    						
+    	    						
+    	    						
+    	    						if(partie1.rools().get(0) == "cercle") 
+    	    						{
+    	    								if((IA.getSym()).compareTo("cercle") == 0)
+    	    								{
+    	    										IA.setWin(true);
+    	    										
+    	    										//break ;
+    	    								}
+    	    						}
+    	    		
+    	    						if(partie1.rools().get(0) == "croix") 
+    	    						{
+    	    							if((IA.getSym()).compareTo("croix") == 0)
+    	    							{
+    	    								IA.setWin(true);
+    	    								
+    	    								//break ;
+    	    								
+    	    							}
+    	    						}
+    	    					}
+    	    		
+    	    					if(IA.getWin() == false) 
+    	    					{
+    	    						joueur1.setTour(true);
+    	    						IA.setTour(false);
+    	    						
+    	    						labelJoueur2.setTextFill(Color.BLACK);
+    	    						labelJoueur1.setTextFill(Color.GREEN);
+    	    						
+    	    						tempsJeu.setText(tempsTour);
+    	    						
+    	    						//break;
+    	    					}
+    	    			    }
+    	    		     } 
+    	            	}
+    	            	
+    	            	if(joueur1.getWin() == true || IA.getWin() == true)
+    	        		{
+    	        			System.out.println("victoir");
+    	        			
+    	        			//le cas de victoir on applique une retation sur les boutton de la ligne ou la collone ou bien la diagonale 
+    	        			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
+    	        			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(3)),Integer.parseInt(partie1.rools().get(4)),tableJeu));
+    	        			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(5)),Integer.parseInt(partie1.rools().get(6)),tableJeu));
+    	        			
+    	        			
+    	        			if(joueur1.getWin() == true)
+    	        			{   
+    	        				//lancer la transition de dimension et d'opacité
+    	        				labelGagnant.setText("Le gagnant est le Joueur 1");
+    	        				annimationLabelGagnant(labelGagnant);
+    	        				
+    	        	
+    	        				//incrementation de score pour le joueur 1
+    	        				joueur1.setNombreWin();
+    	        				nombre_win1++ ;
+    	        				
+    	        				//mise a jour du score sur l'interface 
+    	        				scoreJoueur1.setText(Integer.toString(nombre_win1));
+    	        			}
+    	        			if(IA.getWin() == true) 
+    	        			{
+    	        				
+    	        				
+    	        				//lancer la transition de dimension et d'opacité
+    	        				labelGagnant.setText("Le gagnant est le Joueur 2");
+    	        				annimationLabelGagnant(labelGagnant);
+    	        				
+    	        				//incrementation de score pour le joueur 2
+    	        				IA.setNombreWin();
+    	        				nombre_win2 ++ ;
+    	        				
+    	        				//mise a jour du score sur l'interface 
+    	        				scoreJoueur2.setText(Integer.toString(nombre_win2));
+    	        			}
+    	        			
+    	        			partie1.rools().clear();
+    	        			}
+    	               }	
+    	            	
+    	            	
+    	            	
+    	        		//le cas de victoir on arrete le timer 
+    	        		if(joueur1.getNombreWin() != 0 || IA.getNombreWin() != 0 ) {timer2.cancel();}
+    	        		//le cas ou la table est remplie est que personne n'a gagné on arrete le timer
+    	        		if(finJeu) {timer2.cancel();}
+    	        		
+    	        		
+    	}});}}, 1000, 1000); //Every 1 second
+    	
+    }
    
 	
 	@Override
@@ -470,12 +557,14 @@ public class VueIAController implements Initializable {
 		
 		//on fixe que c'est au joueur 1 de commencer le jeu 
 		joueur1.setTour(true);
-		joueur2.setTour(false);
+		IA.setTour(false);
 		labelJoueur1.setTextFill(Color.GREEN);
 		
 		
 		//en lance notre fonction qui met ajour le tempsJeu  
 		update();
+		
+		jouerIA() ;
 		
 		
 		

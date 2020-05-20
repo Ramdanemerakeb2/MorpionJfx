@@ -335,6 +335,9 @@ public class VueJeuController implements Initializable {
 			if(joueur2.getTour())
 			{
 				
+				
+				
+				
 				//le meme traitement que le joueur 1
 				Button btnclicked = (Button)e.getSource();
 				
