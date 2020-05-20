@@ -6,7 +6,7 @@ public class VerificationPartieJvsJ {
 	
     ArrayList<String> gagner = new ArrayList<String>();
 	
-	String list[][] = new String [3][3];
+	public String list[][] = new String [3][3];
 	
 	
 	public void initialize()
@@ -16,6 +16,34 @@ public class VerificationPartieJvsJ {
 		{
 				for(int j=0 ; j<3 ; j++) 
 				list[i][j] = "rien";		
+		}
+	}
+	
+	public boolean full()
+	{	
+		boolean verif = true; 
+		for(int i = 0;i<3;i++)
+			
+		{
+			for(int j=0 ; j<3 ; j++) {
+				
+				if(this.list[i][j].equals("rien")) {
+						return false ;
+				}
+		     }
+		}
+		return verif ;
+	}
+	
+	public void affiche()
+	{
+		for(int i = 0;i<3;i++)
+		{
+			for(int j=0 ; j<3 ; j++) 
+			{
+				System.out.print(list[i][j] );	
+			}
+			System.out.println("");
 		}
 	}
 	

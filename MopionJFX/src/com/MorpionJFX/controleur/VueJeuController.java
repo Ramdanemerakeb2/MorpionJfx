@@ -67,6 +67,7 @@ public class VueJeuController implements Initializable {
 	static public int nombre_win1 ;
 	static public int nombre_win2 ;
 	public String tempsTour ; 
+	public boolean finJeu ;
 	
 	public Joueur joueur1 = new Joueur("croix") ;
 	public Joueur joueur2 = new Joueur("cercle");
@@ -105,17 +106,17 @@ public class VueJeuController implements Initializable {
     	        		//le cas ou le temps est ecoulé on change de tour 
     	        		if (t1 == -1){
     	        			
-    	        			if( joueur2.getTour() == 1 ) {
-    	        				joueur1.setTour(0);
-    	        				joueur2.setTour(0);
+    	        			if( joueur2.getTour()) {
+    	        				joueur1.setTour(true);
+    	        				joueur2.setTour(false);
     	        				labelJoueur2.setTextFill(Color.BLACK);
     	    					labelJoueur1.setTextFill(Color.GREEN);
     	    					tempsJeu.setText(tempsTour);
     	    					 
     	        			}else {
-    	        				if( joueur1.getTour() == 0 ) {
-	    	        				joueur1.setTour(1);
-	    	        				joueur2.setTour(1);
+    	        				if( joueur1.getTour()) {
+	    	        				joueur1.setTour(false);
+	    	        				joueur2.setTour(true);
 	    	        				labelJoueur1.setTextFill(Color.BLACK);
 	    							labelJoueur2.setTextFill(Color.GREEN);
 	    							
@@ -125,7 +126,9 @@ public class VueJeuController implements Initializable {
     	        			
     	        			}
     	        		//le cas de victoir on arrete le timer 
-    	        		if(joueur1.getNombreWin() != 0 || joueur2.getNombreWin() != 0) {timer.cancel();}
+    	        		if(joueur1.getNombreWin() != 0 || joueur2.getNombreWin() != 0 ) {timer.cancel();}
+    	        		//le cas ou la table est remplie est que personne n'a gagné on arrete le timer
+    	        		if(finJeu) {timer.cancel();}
     	        		
     	        		
     	}});}}, 1000, 1000); //Every 1 second
@@ -144,6 +147,8 @@ public class VueJeuController implements Initializable {
                 return node;
         return null;
     }
+    
+  
     
    
     
@@ -232,6 +237,8 @@ public class VueJeuController implements Initializable {
 	    rt.setCycleCount(40);
 	    rt.setAutoReverse(true);
 	    rt.play();
+	    
+	    //finJeu = true ;
     
 	}
     
@@ -254,7 +261,7 @@ public class VueJeuController implements Initializable {
 	{
 		for(int tour = 0 ; tour<9 ; tour++)
 		{
-			if( joueur1.getTour()== 0 )
+			if( joueur1.getTour())
 			{	
 				
 				Button btnclicked =(Button) e.getSource();
@@ -279,38 +286,15 @@ public class VueJeuController implements Initializable {
 					if(partie1.rools() != null) {
 						
 							
-								switch (partie1.rools().get(0) ) {
 								
-									case "cercle":
-										
-										if((joueur1.getSym()).compareTo("cercle") == 0)
-										    {
-												joueur1.setWin(true);
-												//win = partie1.rools();
-												break ;
-										    }
-										break;
-			
-									case "croix" :
-										
-										if((joueur1.getSym()).compareTo("croix") == 0)
-										{
-											joueur1.setWin(true);
-											//win = partie1.rools();
-				
-											break ;
-											
-										}
-										break;
-								}
 						
 						
-						/*if(partie1.rools().get(0) == "cercle") 
+						if(partie1.rools().get(0) == "cercle") 
 							{
 								if((joueur1.getSym()).compareTo("cercle") == 0)
 								{
 										joueur1.setWin(true);
-										//win = partie1.rools();
+										
 										break ;
 								}
 							}
@@ -320,19 +304,19 @@ public class VueJeuController implements Initializable {
 								if((joueur1.getSym()).compareTo("croix") == 0)
 								{
 									joueur1.setWin(true);
-									//win = partie1.rools();
+									
 		
 									break ;
 									
 								}
-							}*/
+							}
 				   }
 	
 					if(joueur1.getWin() == false)
 					{   
 						//on change de tour 
-						joueur2.setTour(1);
-						joueur1.setTour(1);
+						joueur2.setTour(true);
+						joueur1.setTour(false);
 						
 						//on met a jour les couleurs des label selon le tour 
 						labelJoueur1.setTextFill(Color.BLACK);
@@ -348,7 +332,7 @@ public class VueJeuController implements Initializable {
 			}
 			}
 	
-			if(joueur2.getTour() == 1)
+			if(joueur2.getTour())
 			{
 				
 				//le meme traitement que le joueur 1
@@ -370,37 +354,14 @@ public class VueJeuController implements Initializable {
 		
 					if(partie1.rools() != null) {
 						
-						switch (partie1.rools().get(0) ) {
 						
-						case "cercle":
-							
-							if((joueur2.getSym()).compareTo("cercle") == 0)
-							    {
-									joueur2.setWin(true);
-									//win = partie1.rools();
-									break ;
-							    }
-							break;
-
-						case "croix" :
-							
-							if((joueur2.getSym()).compareTo("croix") == 0)
-							{
-								joueur2.setWin(true);
-								//win = partie1.rools();
-	
-								break ;
-								
-							}
-							break;
-					     }
 						
-						/*if(partie1.rools().get(0) == "cercle") 
+						if(partie1.rools().get(0) == "cercle") 
 						{
 								if((joueur2.getSym()).compareTo("cercle") == 0)
 								{
 										joueur2.setWin(true);
-										//win = partie1.rools();
+										
 										break ;
 								}
 						}
@@ -410,17 +371,17 @@ public class VueJeuController implements Initializable {
 							if((joueur2.getSym()).compareTo("croix") == 0)
 							{
 								joueur2.setWin(true);
-								//win = partie1.rools();
+								
 								break ;
 								
 							}
-						}*/
+						}
 					}
 		
 					if(joueur2.getWin() == false) 
 					{
-						joueur1.setTour(0);
-						joueur2.setTour(0);
+						joueur1.setTour(true);
+						joueur2.setTour(false);
 						
 						labelJoueur2.setTextFill(Color.BLACK);
 						labelJoueur1.setTextFill(Color.GREEN);
@@ -435,7 +396,7 @@ public class VueJeuController implements Initializable {
 		
 		if(joueur1.getWin() == true || joueur2.getWin() == true)
 		{
-			System.out.println("tu peux pas");
+			System.out.println("victoir");
 			
 			//le cas de victoir on applique une retation sur les boutton de la ligne ou la collone ou bien la diagonale 
 			annimationVictoire(getNodeFromGridPane(Integer.parseInt(partie1.rools().get(1)),Integer.parseInt(partie1.rools().get(2)),tableJeu));
@@ -446,7 +407,7 @@ public class VueJeuController implements Initializable {
 			if(joueur1.getWin() == true)
 			{   
 				//lancer la transition de dimension et d'opacité
-				labelGagnant.setText("le gagnant c'est Joueur 1");
+				labelGagnant.setText("Le gagnant est le Joueur 1");
 				annimationLabelGagnant(labelGagnant);
 				
 	
@@ -462,7 +423,7 @@ public class VueJeuController implements Initializable {
 				
 				
 				//lancer la transition de dimension et d'opacité
-				labelGagnant.setText("le gagnant c'est Joueur 2");
+				labelGagnant.setText("Le gagnant est le Joueur 2");
 				annimationLabelGagnant(labelGagnant);
 				
 				//incrementation de score pour le joueur 2
@@ -472,9 +433,17 @@ public class VueJeuController implements Initializable {
 				//mise a jour du score sur l'interface 
 				scoreJoueur2.setText(Integer.toString(nombre_win2));
 			}
+			
 			partie1.rools().clear();
 			}
+		
 	}
+	//la tableJeu est remplie et personne n'a gagné 
+	 if(partie1.full() && joueur1.getWin() == false && joueur2.getWin() == false) {
+		finJeu = true ;
+		labelGagnant.setText("Aucun joueur n'a gagné");
+		annimationLabelGagnant(labelGagnant);
+	 }
 	}
    
 	
@@ -500,8 +469,8 @@ public class VueJeuController implements Initializable {
 		scoreJoueur2.setText(Integer.toString(nombre_win2));
 		
 		//on fixe que c'est au joueur 1 de commencer le jeu 
-		joueur1.setTour(0);
-		joueur2.setTour(0);
+		joueur1.setTour(true);
+		joueur2.setTour(false);
 		labelJoueur1.setTextFill(Color.GREEN);
 		
 		

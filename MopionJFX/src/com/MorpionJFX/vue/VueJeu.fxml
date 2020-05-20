@@ -29,7 +29,7 @@
       						</Button>
                      </children>
                   </HBox>
-                  <Label fx:id="labelGagnant" prefHeight="50.0" prefWidth="368.0" translateX="75.0" translateY="20.0">
+                  <Label fx:id="labelGagnant" prefHeight="50.0" prefWidth="402.0" translateX="55.0" translateY="20.0">
                      <font>
                         <Font size="28.0" />
                      </font>

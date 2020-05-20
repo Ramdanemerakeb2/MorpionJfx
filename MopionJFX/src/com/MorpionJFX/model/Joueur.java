@@ -11,7 +11,7 @@ public class Joueur {
 	
 	
 	String Sym ;
-	public static int tour  ;
+	public  boolean tour  ;
 	Background bg ;
 	boolean win = false ;
 	int nombre_win = 0 ;
@@ -33,11 +33,11 @@ public class Joueur {
 		return this.Sym ;
 	}
 	
-	public void setTour(int i) {
+	public void setTour(boolean i) {
 		tour = i ;
 	}
 	
-	public int getTour() {
+	public boolean getTour() {
 		return tour ;
 	}
 	
