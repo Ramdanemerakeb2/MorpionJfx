@@ -154,7 +154,7 @@ public class VueJeuController implements Initializable {
     
     
 	
-    //les deux fonctions font appele aux fonctions de ControllerVue 
+    //les deux fonctions font appele aux fonctions de MainController
     //cette fonction permet de fermer la fenetre VueJeu et ouvre la fentre de Vue 
     @FXML
 	private void backMenu(ActionEvent e){
@@ -178,7 +178,7 @@ public class VueJeuController implements Initializable {
             //creation une ligne temporelle
             Timeline tl = new Timeline();
             
-            //specifier le type d'interpolation a utiliser dans  l_oTl
+            //specifier le type d'interpolation a utiliser dans  tl
             KeyValue kv = new KeyValue(Root.translateYProperty(), 0, Interpolator.EASE_OUT);
             
             //creation de l'animation
